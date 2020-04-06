@@ -629,8 +629,9 @@ void Microstrain::filter_packet_callback(void *user_ptr, u8 *packet, u16 packet_
 				ekf_imu_msg_.header.frame_id = imu_frame_id_;
 				if (tf_ned_to_enu_)
 				{
-					ekf_imu_msg_.linear_acceleration.x = curr_filter_accel_.y;
-					ekf_imu_msg_.linear_acceleration.y = curr_filter_accel_.x;
+					// IMU acceleration is always in body frame, hence following NWU, not ENU
+					ekf_imu_msg_.linear_acceleration.x = curr_filter_accel_.x;
+					ekf_imu_msg_.linear_acceleration.y = -curr_filter_accel_.y;
 					ekf_imu_msg_.linear_acceleration.z = -curr_filter_accel_.z;
 				}
 				else
