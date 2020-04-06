@@ -11,6 +11,8 @@
       <param name="port" value="/dev/ttyACM0" type="str" />
       <param name="baudrate" value="115200" type="int" />
       <param name="device_setup" value="true" type="bool" />
+      <param name="imu_raw_pub_topic" value="imu/data" type="str" />
+      <param name="imu_status_pub_topic" value="imu/status" type="str" />
 
       <!-- General Settings -->
       <param name="readback_settings" value="true" type="bool" />
@@ -19,18 +21,22 @@
 
       <!-- Additional data settings -->
       <param name="publish_rpy" value="true" type="bool" />
-      <param name="publish_mag" value="true" type="bool" />
+      <param name="publish_mag" value="false" type="bool" />
+      <param name="imu_rpy_pub_topic" value="imu/rpy" type="str" />
+      <param name="imu_mag_pub_topic" value="imu/mag" type="str" />
 
       <!-- Complementary Filter Settings-->
       <param name="publish_cf" value="false" type="bool" />
       <param name="cf_rate" value="100" type="int" />
+      <param name="imu_cf_pub_topic" value="imu/cf/data" type="str" />
+      <param name="imu_cf_rpy_pub_topic" value="imu/cf/rpy" type="str" />
 
       <!-- EKF Settings-->
       <param name="auto_init" value="true" type="bool" />
       <param name="imu_frame_id" value="imu_link" type="str" />
 
       <!-- Declination source 1=None, 2=magnetic, 3=manual -->
-      <param name="declination_source" value="1" type="int" />
+      <param name="declination_source" value="2" type="int" />
 
       <!--<param name="declination" value="0.23" type="double" />-->
       <param name="ekf_rate" value="100" type="int" />

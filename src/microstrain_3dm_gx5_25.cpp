@@ -166,21 +166,28 @@ void Microstrain::run()
 	private_nh.param("publish_mag",publish_mag_,false);
 	private_nh.param("tf_ned_to_enu",tf_ned_to_enu_,true);
 
+	private_nh.param("imu_raw_pub_topic", imu_raw_pub_topic_, std::string("imu/data"));
+	private_nh.param("imu_rpy_pub_topic", imu_rpy_pub_topic_, std::string("imu/rpy"));
+	private_nh.param("imu_mag_pub_topic", imu_mag_pub_topic_, std::string("imu/mag"));
+	private_nh.param("imu_cf_pub_topic", imu_cf_pub_topic_, std::string("imu/cf/data"));
+	private_nh.param("imu_cf_rpy_pub_topic", imu_cf_rpy_pub_topic_, std::string("imu/cf/rpy"));
+	private_nh.param("imu_status_pub_topic", imu_status_pub_topic_, std::string("imu/status"));
+
 	// ROS publishers and subscribers
-	status_pub_ = node.advertise<std_msgs::Int16MultiArray>("imu/status",100);
-	ekf_pub_ = node.advertise<sensor_msgs::Imu>("imu/data",100);
+	status_pub_ = node.advertise<std_msgs::Int16MultiArray>(imu_status_pub_topic_,100);
+	ekf_pub_ = node.advertise<sensor_msgs::Imu>(imu_raw_pub_topic_,100);
 	if (publish_rpy_)
-		ekf_rpy_pub_ = node.advertise<geometry_msgs::Vector3Stamped>("imu/rpy",100);
+		ekf_rpy_pub_ = node.advertise<geometry_msgs::Vector3Stamped>(imu_rpy_pub_topic_,100);
 
 	if (publish_cf_)
 	{
-		cf_pub_ = node.advertise<sensor_msgs::Imu>("imu/cf/data",100);
+		cf_pub_ = node.advertise<sensor_msgs::Imu>(imu_cf_pub_topic_,100);
 		if (publish_rpy_)
-			cf_rpy_pub_ = node.advertise<geometry_msgs::Vector3Stamped>("imu/cf/rpy",100);
+			cf_rpy_pub_ = node.advertise<geometry_msgs::Vector3Stamped>(imu_cf_rpy_pub_topic_,100);
 	}
 
 	if (publish_mag_)
-		mag_pub_ = node.advertise<sensor_msgs::MagneticField>("imu/mag",100);                                                                                                                 //SJP Added
+		mag_pub_ = node.advertise<sensor_msgs::MagneticField>(imu_mag_pub_topic_,100);                                                                                                                 //SJP Added
 
 
 	ros::ServiceServer service = node.advertiseService("reset_kf", &Microstrain::reset_callback, this);

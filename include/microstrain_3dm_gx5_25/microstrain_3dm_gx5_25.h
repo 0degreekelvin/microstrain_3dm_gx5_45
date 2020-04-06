@@ -138,6 +138,12 @@ namespace Microstrain
    ros::Publisher status_pub_;
    std_msgs::Int16MultiArray status_msg_;
    std::string imu_frame_id_;
+   std::string imu_raw_pub_topic_;
+   std::string imu_rpy_pub_topic_;
+   std::string imu_mag_pub_topic_;
+   std::string imu_cf_pub_topic_;
+   std::string imu_cf_rpy_pub_topic_;
+   std::string imu_status_pub_topic_;
    bool tf_ned_to_enu_;
    //Complementary Filter
    ros::Publisher cf_pub_;
