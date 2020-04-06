@@ -25,6 +25,17 @@
       <param name="imu_rpy_pub_topic" value="imu/rpy" type="str" />
       <param name="imu_mag_pub_topic" value="imu/mag" type="str" />
 
+      <param name="use_const_orientation_cov" value="false" type="bool" />
+      <rosparam param="imu_orientation_cov"> [0.001, 0, 0, 
+                                             0, 0.001, 0, 
+                                             0, 0, 0.001]</rosparam>
+      <rosparam param="imu_linear_cov"> [0.001, 0, 0, 
+                                          0, 0.001, 0, 
+                                          0, 0, 0.001]</rosparam>
+      <rosparam param="imu_angular_cov"> [0.001, 0, 0, 
+                                          0, 0.001, 0, 
+                                          0, 0, 0.001]</rosparam>
+
       <!-- Complementary Filter Settings-->
       <param name="publish_cf" value="false" type="bool" />
       <param name="cf_rate" value="100" type="int" />

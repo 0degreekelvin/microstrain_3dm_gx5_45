@@ -36,7 +36,7 @@ extern "C" {
 
 #include <cstdio>
 #include <unistd.h>
-
+#include <vector>
 
 // ROS
 #include "ros/ros.h"
@@ -145,6 +145,13 @@ namespace Microstrain
    std::string imu_cf_rpy_pub_topic_;
    std::string imu_status_pub_topic_;
    bool tf_ned_to_enu_;
+
+   //Covariances
+   std::vector<double> imu_linear_cov_;
+   std::vector<double> imu_angular_cov_;
+   std::vector<double> imu_orientation_cov_;
+   bool use_const_orientation_cov_;
+
    //Complementary Filter
    ros::Publisher cf_pub_;
    bool publish_cf_;

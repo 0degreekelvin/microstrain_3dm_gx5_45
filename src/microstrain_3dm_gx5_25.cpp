@@ -166,6 +166,12 @@ void Microstrain::run()
 	private_nh.param("publish_mag",publish_mag_,false);
 	private_nh.param("tf_ned_to_enu",tf_ned_to_enu_,true);
 
+	std::vector<double> default_cov(9, 0.0);
+	private_nh.param("use_const_orientation_cov", use_const_orientation_cov_, false);
+	private_nh.param("imu_orientation_cov", imu_orientation_cov_, default_cov);
+    private_nh.param("imu_linear_cov", imu_linear_cov_, default_cov);
+    private_nh.param("imu_angular_cov", imu_angular_cov_, default_cov);
+
 	private_nh.param("imu_raw_pub_topic", imu_raw_pub_topic_, std::string("imu/data"));
 	private_nh.param("imu_rpy_pub_topic", imu_rpy_pub_topic_, std::string("imu/rpy"));
 	private_nh.param("imu_mag_pub_topic", imu_mag_pub_topic_, std::string("imu/mag"));
@@ -724,17 +730,22 @@ void Microstrain::filter_packet_callback(void *user_ptr, u8 *packet, u16 packet_
 
 				//For little-endian targets, byteswap the data field
 				mip_filter_euler_attitude_uncertainty_byteswap(&curr_filter_att_uncertainty_);
-				if (tf_ned_to_enu_)
-				{
-					ekf_imu_msg_.orientation_covariance[0] = curr_filter_att_uncertainty_.pitch*curr_filter_att_uncertainty_.pitch;
-					ekf_imu_msg_.orientation_covariance[4] = curr_filter_att_uncertainty_.roll*curr_filter_att_uncertainty_.roll;
-					ekf_imu_msg_.orientation_covariance[8] = curr_filter_att_uncertainty_.yaw*curr_filter_att_uncertainty_.yaw;
-				}
-				else
-				{
-					ekf_imu_msg_.orientation_covariance[0] = curr_filter_att_uncertainty_.roll*curr_filter_att_uncertainty_.roll;
-					ekf_imu_msg_.orientation_covariance[4] = curr_filter_att_uncertainty_.pitch*curr_filter_att_uncertainty_.pitch;
-					ekf_imu_msg_.orientation_covariance[8] = curr_filter_att_uncertainty_.yaw*curr_filter_att_uncertainty_.yaw;
+				if (use_const_orientation_cov_) {
+					std::copy(imu_orientation_cov_.begin(), imu_orientation_cov_.end(), ekf_imu_msg_.orientation_covariance.begin());
+            	}
+				else {
+					if (tf_ned_to_enu_)
+					{
+						ekf_imu_msg_.orientation_covariance[0] = curr_filter_att_uncertainty_.pitch*curr_filter_att_uncertainty_.pitch;
+						ekf_imu_msg_.orientation_covariance[4] = curr_filter_att_uncertainty_.roll*curr_filter_att_uncertainty_.roll;
+						ekf_imu_msg_.orientation_covariance[8] = curr_filter_att_uncertainty_.yaw*curr_filter_att_uncertainty_.yaw;
+					}
+					else
+					{
+						ekf_imu_msg_.orientation_covariance[0] = curr_filter_att_uncertainty_.roll*curr_filter_att_uncertainty_.roll;
+						ekf_imu_msg_.orientation_covariance[4] = curr_filter_att_uncertainty_.pitch*curr_filter_att_uncertainty_.pitch;
+						ekf_imu_msg_.orientation_covariance[8] = curr_filter_att_uncertainty_.yaw*curr_filter_att_uncertainty_.yaw;
+					}
 				}
 			} break;
 
@@ -778,6 +789,15 @@ void Microstrain::filter_packet_callback(void *user_ptr, u8 *packet, u16 packet_
 			default: break;
 			}
 		}
+
+		// Add covariances manually
+		std::copy(imu_linear_cov_.begin(), imu_linear_cov_.end(),
+        ekf_imu_msg_.linear_acceleration_covariance.begin());
+        // Since the sensor does not produce a covariance for angular velocity, set it based
+        // on our pulled in parameters.
+        std::copy(imu_angular_cov_.begin(), imu_angular_cov_.end(),
+        ekf_imu_msg_.angular_velocity_covariance.begin());
+
 		// Publish
 		ekf_pub_.publish(ekf_imu_msg_);
 		if(publish_rpy_)
