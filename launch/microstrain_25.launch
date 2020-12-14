@@ -8,11 +8,11 @@
          type="microstrain_3dm_gx5_25_node"
          output="screen">
 
-      <param name="port" value="/dev/ttyACM0" type="str" />
+      <param name="port" value="/dev/microstrain" type="str" />
       <param name="baudrate" value="115200" type="int" />
       <param name="device_setup" value="true" type="bool" />
-      <param name="imu_raw_pub_topic" value="imu/data" type="str" />
-      <param name="imu_status_pub_topic" value="imu/status" type="str" />
+      <param name="imu_raw_pub_topic" value="imu_raw" type="str" />
+      <param name="imu_status_pub_topic" value="imu_raw/status" type="str" />
 
       <!-- General Settings -->
       <param name="readback_settings" value="true" type="bool" />
@@ -50,7 +50,7 @@
       <param name="declination_source" value="2" type="int" />
 
       <!--<param name="declination" value="0.23" type="double" />-->
-      <param name="ekf_rate" value="100" type="int" />
+      <param name="ekf_rate" value="50" type="int" />
       <param name="dynamics_mode" value="1" type="int" />
    </node>
 
